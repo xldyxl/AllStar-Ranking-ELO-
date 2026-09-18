@@ -28,34 +28,28 @@ try:
     # 3) '순위' 열 추가
     df.insert(0, '순위', range(1, len(df) + 1))
 
-    # 4) 데이터 타입에 따른 소수점 포맷팅을 미리 적용
-    # Pandas Styler를 사용하기 위해 미리 데이터 형식을 맞춤
-    format_dict = {}
-    for col in df.columns:
-        if df[col].dtype in ['float64', 'float32']:
-            format_dict[col] = "{:.1f}"
-        elif df[col].dtype in ['int64', 'int32'] and col != '순위':
-            format_dict[col] = "{:d}"
+    # 4) Streamlit 고유 column_config로 '모든 열' 정렬 및 폭 강제 지정
+    # width="small"을 빼고 자동 크기로 두어 헤더 정렬이 더 잘 먹히도록 수정
+    column_config = {
+        "순위": st.column_config.NumberColumn("순위", alignment="center", format="%d"),
+        "닉네임": st.column_config.TextColumn("닉네임", alignment="center", width=140),
+        "팀명": st.column_config.TextColumn("팀명", alignment="center", width=140),
+        "16시즌 소프트리셋": st.column_config.NumberColumn("16시즌 소프트리셋", alignment="center", format="%.1f"),
+        "17시즌 ELO": st.column_config.NumberColumn("17시즌 ELO", alignment="center", format="%.1f"),
+        "+-": st.column_config.NumberColumn("+-", alignment="center", format="%.1f"),
+        "진행된 경기 수": st.column_config.NumberColumn("진행된 경기 수", alignment="center", format="%d"),
+    }
 
-    # 5) Pandas Styler를 이용한 CSS 강제 적용 (헤더 및 셀 데이터 모두 가운데 정렬)
-    # th: 헤더(열 제목), td: 셀 데이터
-    styled_df = df.style.format(format_dict).set_properties(**{'text-align': 'center'}).set_table_styles(
-        [dict(selector='th', props=[('text-align', 'center')])]
-    )
-
-    # 6) 위아래 스크롤바를 없애기 위해 전체 행 높이 계산
+    # 5) 위아래 스크롤바를 없애기 위해 전체 행 높이 계산
     table_height = (len(df) + 1) * 36 + 15
 
-    # 7) 표 출력 (Styler 객체를 직접 넘김)
+    # 6) 표 출력 (styled_df 대신 순정 df 사용)
     st.dataframe(
-        styled_df,
+        df,
         use_container_width=True,
         hide_index=True,
         height=table_height,
-        column_config={
-            "닉네임": st.column_config.TextColumn("닉네임", width=140),
-            "팀명": st.column_config.TextColumn("팀명", width=140),
-        }
+        column_config=column_config
     )
 
 except Exception as e:
