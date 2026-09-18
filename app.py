@@ -9,7 +9,7 @@ st.title("🏆 올스타리그 랭킹")
 st.caption("최신 경기 결과가 반영된 실시간 ELO 랭킹입니다.")
 
 # 엑셀 파일 절대 경로
-EXCEL_FILE_PATH = "All-Star LEAGUE.xlsm"
+EXCEL_FILE_PATH = "Ranking_Data.xlsx"
 
 try:
     # 2. 데이터 불러오기
