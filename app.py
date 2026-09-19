@@ -7,7 +7,7 @@ st.set_page_config(layout="wide")
 # 2. 엑셀 데이터 불러오기
 df = pd.read_excel('Ranking_Data.xlsx')
 
-# 3. '패' 열(G열)까지만 데이터 자르기
+# 3. '패' 열까지 데이터 자르기 (중간에 열이 추가되어도 '패'를 자동으로 찾아 자름)
 col_limit = df.columns.get_loc('패') + 1
 df = df.iloc[:, :col_limit]
 
@@ -18,10 +18,11 @@ if '참가자고유ID' in df.columns:
 # 5. 맨 왼쪽에 '순위' 열 추가 (1등부터 순차적으로 부여)
 df.insert(0, '순위', range(1, len(df) + 1))
 
-# 6. 컬럼 폭 최적화 및 정렬 (픽셀 단위로 세밀하게 조정)
+# 6. 컬럼 폭 최적화 및 정렬 (± 열 추가 및 형식 지정)
 column_config = {
     "순위": st.column_config.NumberColumn("순위", alignment="center", format="%d", width=50),
-    "17th ELO": st.column_config.NumberColumn("17th ELO", alignment="center", format="%.1f", width=90),
+    "17th ELO": st.column_config.NumberColumn("17th ELO", alignment="center", format="%.2f", width=100), # 소수점 둘째 자리까지 표시
+    "±": st.column_config.NumberColumn("±", alignment="center", format="%+.1f", width=70), # ★ 양수일 때 +가 붙도록 %+.1f 설정
     "닉네임": st.column_config.TextColumn("닉네임", alignment="center", width=160),
     "팀명": st.column_config.TextColumn("팀명", alignment="center", width=220), 
     "17시즌 경기 수": st.column_config.NumberColumn("17시즌 경기 수", alignment="center", format="%d", width=110),
@@ -43,7 +44,7 @@ for col in df.columns:
 # 8. 위아래 스크롤바를 없애기 위해 전체 행 높이 자동 계산
 table_height = (len(df) + 1) * 36 + 15
 
-# 9. 표 출력 (use_container_width=False 로 화면 꽉 채우기 해제)
+# 9. 표 출력
 st.dataframe(
     df,
     use_container_width=False, 
