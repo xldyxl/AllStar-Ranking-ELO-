@@ -1,15 +1,27 @@
-# 1) '패' 열(G열)까지만 데이터 자르기
+import streamlit as st
+import pandas as pd
+
+# 1. 페이지 기본 설정 (선택사항)
+st.set_page_config(layout="wide")
+
+# 2. 엑셀 데이터 불러오기 (★이 부분이 아까 지워져서 에러가 난 겁니다!)
+df = pd.read_excel('Ranking_Data.xlsx')
+
+# ---------------------------------------------------------
+# 3. 여기서부터 데이터 가공 및 표출 (아까 수정한 부분)
+
+# '패' 열(G열)까지만 데이터 자르기
 col_limit = df.columns.get_loc('패') + 1
 df = df.iloc[:, :col_limit]
 
-# 2) '참가자고유ID' 컬럼 삭제 (존재할 경우)
+# '참가자고유ID' 컬럼 삭제 (존재할 경우)
 if '참가자고유ID' in df.columns:
     df = df.drop(columns=['참가자고유ID'])
 
-# 3) 맨 왼쪽에 '순위' 열 추가 (1등부터 순차적으로 부여)
+# 맨 왼쪽에 '순위' 열 추가 (1등부터 순차적으로 부여)
 df.insert(0, '순위', range(1, len(df) + 1))
 
-# 4) 컬럼 폭 최적화 및 정렬 (이미지 열 순서 및 명칭에 맞게 수정)
+# 컬럼 폭 최적화 및 정렬
 column_config = {
     "순위": st.column_config.NumberColumn("순위", alignment="center", format="%d", width="small"),
     "17th ELO": st.column_config.NumberColumn("17th ELO", alignment="center", format="%.1f"),
@@ -31,10 +43,10 @@ for col in df.columns:
         else:
             column_config[col] = st.column_config.TextColumn(col, alignment="center")
 
-# 5) 위아래 스크롤바를 없애기 위해 전체 행 높이 자동 계산
+# 위아래 스크롤바를 없애기 위해 전체 행 높이 자동 계산
 table_height = (len(df) + 1) * 36 + 15
 
-# 6) 표 출력
+# 표 출력
 st.dataframe(
     df,
     use_container_width=True,
