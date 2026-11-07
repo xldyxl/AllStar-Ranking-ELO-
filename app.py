@@ -7,28 +7,29 @@ st.set_page_config(layout="wide")
 # 2. 엑셀 데이터 불러오기
 df = pd.read_excel('Ranking_Data.xlsx')
 
-# 3. '패' 열까지 데이터 자르기 (중간에 열이 추가되어도 '패'를 자동으로 찾아 자름)
-col_limit = df.columns.get_loc('패') + 1
+# 3. '순위 변동' 열까지 데이터 자르기 (지정된 열까지 자동으로 자름)
+col_limit = df.columns.get_loc('순위 변동') + 1
 df = df.iloc[:, :col_limit]
 
 # 4. '참가자고유ID' 컬럼 삭제 (존재할 경우)
 if '참가자고유ID' in df.columns:
     df = df.drop(columns=['참가자고유ID'])
 
-# 5. 맨 왼쪽에 '순위' 열 추가 (1등부터 순차적으로 부여)
-df.insert(0, '순위', range(1, len(df) + 1))
+# 5. (요청에 따라 코드로 순위 열을 추가하던 로직은 삭제되었습니다)
 
-# 6. 컬럼 폭 최적화 및 정렬 (± 열 추가 및 형식 지정)
+# 6. 컬럼 폭 최적화 및 정렬 (형식 지정)
 column_config = {
-    "순위": st.column_config.NumberColumn("순위", alignment="center", format="%d", width=50),
-    "17th ELO": st.column_config.NumberColumn("17th ELO", alignment="center", format="%.2f", width=100), # 소수점 둘째 자리까지 표시
-    "±": st.column_config.NumberColumn("±", alignment="center", format="%+.1f", width=70), # ★ 양수일 때 +가 붙도록 %+.1f 설정
+    "순위": st.column_config.NumberColumn("순위", alignment="center", format="%d", width=60),
+    "18th ELO": st.column_config.NumberColumn("18th ELO", alignment="center", format="%.2f", width=100), # 소수점 둘째 자리까지 표시
+    "±": st.column_config.NumberColumn("±", alignment="center", format="%+.1f", width=70), # ★ 양수일 때 +가 붙도록 설정
     "닉네임": st.column_config.TextColumn("닉네임", alignment="center", width=160),
     "팀명": st.column_config.TextColumn("팀명", alignment="center", width=220), 
-    "17시즌 경기 수": st.column_config.NumberColumn("17시즌 경기 수", alignment="center", format="%d", width=110),
+    "18시즌 경기 수": st.column_config.NumberColumn("18시즌 경기 수", alignment="center", format="%d", width=110),
     "승": st.column_config.NumberColumn("승", alignment="center", format="%d", width=60),
     "무": st.column_config.NumberColumn("무", alignment="center", format="%d", width=60),
     "패": st.column_config.NumberColumn("패", alignment="center", format="%d", width=60),
+    "개막 순위": st.column_config.NumberColumn("개막 순위", alignment="center", format="%d", width=90),
+    "순위 변동": st.column_config.TextColumn("순위 변동", alignment="center", width=90), # 상승/하강 기호 및 텍스트 표시
 }
 
 # 7. 예상치 못한 다른 컬럼 대비 기본 정렬 (안전 장치)
