@@ -7,8 +7,8 @@ st.set_page_config(layout="wide")
 # 2. 엑셀 데이터 불러오기
 df = pd.read_excel('Ranking_Data.xlsx')
 
-# 3. '개막 순위' 열까지 데이터 자르기 (중간에 열이 추가되어도 '패'를 자동으로 찾아 자름)
-col_limit = df.columns.get_loc('개막 순위') + 1
+# 3. '패' 열까지 데이터 자르기 (중간에 열이 추가되어도 '패'를 자동으로 찾아 자름)
+col_limit = df.columns.get_loc('패') + 1
 df = df.iloc[:, :col_limit]
 
 # 4. '참가자고유ID' 컬럼 삭제 (존재할 경우)
@@ -29,7 +29,6 @@ column_config = {
     "승": st.column_config.NumberColumn("승", alignment="center", format="%d", width=60),
     "무": st.column_config.NumberColumn("무", alignment="center", format="%d", width=60),
     "패": st.column_config.NumberColumn("패", alignment="center", format="%d", width=60),
-    "개막 순위": st.column_config.NumberColumn("개막 순위", alignment="center", format="%d", width=60),
 }
 
 # 7. 예상치 못한 다른 컬럼 대비 기본 정렬 (안전 장치)
